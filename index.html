@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FlowStream - Streaming App</title>
+    
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #141414;
+            --card-bg: #1f1f1f;
+            --accent-color: #E50914;
+            --text-main: #ffffff;
+            --text-secondary: #aaaaaa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-bottom: 70px;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Navbar Superior */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 55px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(20,20,20,0) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+
+        .brand-logo {
+            color: var(--accent-color);
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        /* Banner Principal */
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px 16px;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            background: linear-gradient(180deg, transparent 0%, #141414 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 2px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        /* Listas y Filas Horizontales */
+        .category-section {
+            margin-top: 20px;
+            padding-left: 16px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #e5e5e5;
+        }
+
+        .horizontal-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-right: 16px;
+            scrollbar-width: none;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .movie-card {
+            flex: 0 0 110px;
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: var(--card-bg);
+            cursor: pointer;
+        }
+
+        .poster-container {
+            width: 100%;
+            height: 155px;
+            position: relative;
+        }
+
+        .poster-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .type-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background-color: rgba(0,0,0,0.8);
+            color: var(--accent-color);
+            font-size: 9px;
+            font-weight: bold;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .movie-card-title {
+            font-size: 11px;
+            padding: 6px 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #ccc;
+        }
+
+        /* SPA Vista Detalle y Reproducción */
+        .page-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #141414;
+            z-index: 2000;
+            overflow-y: auto;
+            padding-bottom: 40px;
+        }
+
+        .view-header {
+            position: relative;
+            width: 100%;
+        }
+
+        .btn-back {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            z-index: 110;
+            cursor: pointer;
+        }
+
+        .video-player-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #000;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .video-player-box video {
+            width: 100%;
+            height: 100%;
+            outline: none;
+        }
+
+        .details-body {
+            padding: 16px;
+        }
+
+        .details-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 8px 0;
+        }
+
+        .match-rate {
+            color: #46d369;
+            font-weight: bold;
+        }
+
+        /* Lista de Episodios */
+        .episodes-section {
+            margin-top: 20px;
+        }
+
+        .season-select {
+            width: 100%;
+            background-color: #2b2b2b;
+            color: white;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .episode-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .episode-card {
+            display: flex;
+            gap: 12px;
+            background-color: var(--card-bg);
+            border-radius: 4px;
+            padding: 8px;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .episode-thumb {
+            width: 80px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 3px;
+        }
+
+        .episode-info {
+            flex: 1;
+        }
+
+        .episode-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .episode-duration {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        /* Navigation Bar */
+        .bottom-navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 55px;
+            background-color: #121212;
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: #757575;
+            text-decoration: none;
+            font-size: 10px;
+            background: none;
+            border: none;
+        }
+
+        .nav-link.active {
+            color: white;
+        }
+
+        .nav-link i {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-logo">FLOWSTREAM</div>
+        <i class="fa-solid fa-magnifying-glass" style="font-size: 18px; color: white;"></i>
+    </header>
+
+    <div id="catalog-view">
+        <div class="hero-banner" id="heroBanner">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <span class="hero-badge">Destacado</span>
+                <h1 class="hero-title" id="heroTitle">Cargando...</h1>
+                <div class="hero-btns">
+                    <button class="btn-action" onclick="openMediaDetails(heroMediaId)">
+                        <i class="fa-solid fa-play"></i> Reproducir
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="category-title">Agregados Recientemente</h3>
+            <div class="horizontal-scroll" id="recentRow"></div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="category-title">Tendencias Ahora</h3>
+            <div class="horizontal-scroll" id="trendingRow"></div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="category-title">Series Originales</h3>
+            <div class="horizontal-scroll" id="seriesRow"></div>
+        </div>
+    </div>
+
+    <!-- Vista Simulada de Detalle y Reproductor -->
+    <div id="details-view" class="page-view">
+        <div class="view-header">
+            <button class="btn-back" onclick="closeDetailsView()"><i class="fa-solid fa-arrow-left"></i></button>
+            <div class="video-player-box">
+                <video id="mainVideoPlayer" controls playsinline>
+                    <source id="videoSource" src="" type="video/mp4">
+                    Tu navegador no soporta el reproductor de video.
+                </video>
+            </div>
+        </div>
+        
+        <div class="details-body">
+            <h1 id="mediaTitle" style="font-size: 20px; font-weight: 800;"></h1>
+            <div class="details-meta">
+                <span class="match-rate">98% de coincidencia</span>
+                <span id="mediaYear">2026</span>
+                <span id="mediaTypeBadge" style="border: 1px solid #777; padding: 0 4px; font-size: 10px;">SERIE</span>
+            </div>
+            <p id="mediaSynopsis" style="font-size: 12px; line-height: 1.4; color: #ccc; margin-top: 8px;"></p>
+
+            <div class="episodes-section" id="episodesSection">
+                <select class="season-select" id="seasonSelect" onchange="renderEpisodes()">
+                </select>
+                <div class="episode-list" id="episodeList">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-navbar">
+        <button class="nav-link active"><i class="fa-solid fa-house"></i>Inicio</button>
+        <button class="nav-link"><i class="fa-solid fa-magnifying-glass"></i>Buscar</button>
+        <button class="nav-link"><i class="fa-solid fa-folder"></i>Librería</button>
+        <button class="nav-link"><i class="fa-solid fa-download"></i>Descargas</button>
+    </nav>
+
+    <script>
+        // Generador de pósteres dinámicos local (SVG) para evitar fallos de red o CORS
+        function createSvgPoster(title, color1, color2) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+                <defs>
+                    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${color1}"/>
+                        <stop offset="100%" stop-color="${color2}"/>
+                    </linearGradient>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#g)"/>
+                <circle cx="150" cy="200" r="80" fill="rgba(255,255,255,0.1)"/>
+                <text x="50%" y="85%" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">${title}</text>
+            </svg>`;
+            return 'data:image/svg+xml;base64,' + btoa(svg);
+        }
+
+        // Fuente de video MP4 pública altamente disponible via CDN
+        const sampleVideo = 'https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/freeview-licence.mp4';
+
+        // Base de datos de películas y series
+        const catalogData = [
+            {
+                id: 1,
+                type: 'series',
+                category: 'recent',
+                title: 'Monarch: Legado',
+                year: '2024',
+                synopsis: 'Tras la atronadora batalla entre Godzilla y los Titanes que arrasó San Francisco, dos hermanos siguen los pasos de su padre para descubrir la conexión de su familia con la organización secreta Monarch.',
+                poster: createSvgPoster('Monarch', '#8e2de2', '#4a00e0'),
+                seasons: [
+                    {
+                        seasonNumber: 1,
+                        episodes: [
+                            { ep: 1, title: 'T1:E1 - Consecuencias', duration: '48m', videoUrl: sampleVideo, thumb: createSvgPoster('E1', '#111', '#444') },
+                            { ep: 2, title: 'T1:E2 - Inserción', duration: '50m', videoUrl: sampleVideo, thumb: createSvgPoster('E2', '#111', '#444') }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                type: 'movie',
+                category: 'recent',
+                title: 'Furiosa',
+                year: '2024',
+                synopsis: 'Al caer el mundo, la joven Furiosa es arrebatada del Lugar Verde de Muchas Madres y cae en manos de una gran Horda de Motoristas liderada por el Señor de la Guerra Dementus.',
+                poster: createSvgPoster('Furiosa', '#f12711', '#f5af19'),
+                videoUrl: sampleVideo
+            },
+            {
+                id: 3,
+                type: 'movie',
+                category: 'recent',
+                title: 'Anatomía Caída',
+                year: '2023',
+                synopsis: 'Sandra, una escritora alemana, vive con su marido Samuel y su hijo ciego Daniel en un chalé en medio de los Alpes franceses. Cuando Samuel fallece en misteriosas circunstancias, la investigación averigua si se trató de un suicidio o un homicidio.',
+                poster: createSvgPoster('Anatomía', '#2193b0', '#6dd5ed'),
+                videoUrl: sampleVideo
+            },
+            {
+                id: 4,
+                type: 'movie',
+                category: 'trending',
+                title: 'Pobres Criaturas',
+                year: '2023',
+                synopsis: 'Bella Baxter es una joven revivida por el brillante y poco ortodoxo científico Dr. Godwin Baxter. Bajo la protección de Baxter, Bella está ansiosa por aprender.',
+                poster: createSvgPoster('Pobres C.', '#3a1c71', '#d76d77'),
+                videoUrl: sampleVideo
+            },
+            {
+                id: 5,
+                type: 'movie',
+                category: 'trending',
+                title: 'Dune: Parte 2',
+                year: '2024',
+                synopsis: 'Paul Atreides se une a Chani y a los Fremen mientras busca venganza contra los conspiradores que destruyeron a su familia.',
+                poster: createSvgPoster('Dune 2', '#1f4037', '#99f2c8'),
+                videoUrl: sampleVideo
+            },
+            {
+                id: 6,
+                type: 'series',
+                category: 'series',
+                title: 'Stranger Things',
+                year: '2022',
+                synopsis: 'Cuando un niño desaparece, sus amigos, su familia y la policía se ven envueltos en un misterio aterrador que involucra experimentos secretos.',
+                poster: createSvgPoster('Stranger T.', '#000000', '#e50914'),
+                seasons: [
+                    {
+                        seasonNumber: 1,
+                        episodes: [
+                            { ep: 1, title: 'T1:E1 - La desaparición', duration: '48m', videoUrl: sampleVideo, thumb: createSvgPoster('E1', '#222', '#555') },
+                            { ep: 2, title: 'T1:E2 - La loca de la calle Maple', duration: '55m', videoUrl: sampleVideo, thumb: createSvgPoster('E2', '#222', '#555') }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 7,
+                type: 'movie',
+                category: 'series',
+                title: 'Spider-Man',
+                year: '2023',
+                synopsis: 'Miles Morales emprende una aventura a través del Multiverso junto con Gwen Stacy y un nuevo equipo de la Spider-Gente.',
+                poster: createSvgPoster('Spider-Man', '#eb3b5a', '#2bcbba'),
+                videoUrl: sampleVideo
+            }
+        ];
+
+        let activeMedia = null;
+        let heroMediaId = 1;
+
+        function renderCatalog() {
+            const recentRow = document.getElementById('recentRow');
+            const trendingRow = document.getElementById('trendingRow');
+            const seriesRow = document.getElementById('seriesRow');
+
+            recentRow.innerHTML = '';
+            trendingRow.innerHTML = '';
+            seriesRow.innerHTML = '';
+
+            catalogData.forEach(item => {
+                const cardHTML = `
+                    <div class="movie-card" onclick="openMediaDetails(${item.id})">
+                        <div class="poster-container">
+                            <span class="type-badge">${item.type === 'series' ? 'SERIE' : 'PELI'}</span>
+                            <img src="${item.poster}" class="poster-img" alt="${item.title}">
+                        </div>
+                        <div class="movie-card-title">${item.title}</div>
+                    </div>
+                `;
+
+                if (item.category === 'recent') recentRow.innerHTML += cardHTML;
+                if (item.category === 'trending') trendingRow.innerHTML += cardHTML;
+                if (item.category === 'series') seriesRow.innerHTML += cardHTML;
+            });
+
+            // Banner principal
+            const hero = catalogData[0];
+            heroMediaId = hero.id;
+            document.getElementById('heroBanner').style.backgroundImage = `url('${hero.poster}')`;
+            document.getElementById('heroTitle').innerText = hero.title;
+        }
+
+        function openMediaDetails(id) {
+            activeMedia = catalogData.find(m => m.id === id);
+            if (!activeMedia) return;
+
+            document.getElementById('details-view').style.display = 'block';
+            document.getElementById('mediaTitle').innerText = activeMedia.title;
+            document.getElementById('mediaYear').innerText = activeMedia.year;
+            document.getElementById('mediaTypeBadge').innerText = activeMedia.type === 'series' ? 'SERIE' : 'PELÍCULA';
+            document.getElementById('mediaSynopsis').innerText = activeMedia.synopsis;
+
+            const episodesSec = document.getElementById('episodesSection');
+
+            if (activeMedia.type === 'series') {
+                episodesSec.style.display = 'block';
+                setupSeasonSelector();
+                renderEpisodes();
+                loadVideoSource(activeMedia.seasons[0].episodes[0].videoUrl);
+            } else {
+                episodesSec.style.display = 'none';
+                loadVideoSource(activeMedia.videoUrl);
+            }
+        }
+
+        function setupSeasonSelector() {
+            const select = document.getElementById('seasonSelect');
+            select.innerHTML = '';
+            activeMedia.seasons.forEach(s => {
+                select.innerHTML += `<option value="${s.seasonNumber}">Temporada ${s.seasonNumber}</option>`;
+            });
+        }
+
+        function renderEpisodes() {
+            const seasonNum = parseInt(document.getElementById('seasonSelect').value);
+            const season = activeMedia.seasons.find(s => s.seasonNumber === seasonNum);
+            const epList = document.getElementById('episodeList');
+            epList.innerHTML = '';
+
+            if (season) {
+                season.episodes.forEach(ep => {
+                    epList.innerHTML += `
+                        <div class="episode-card" onclick="loadVideoSource('${ep.videoUrl}')">
+                            <img src="${ep.thumb}" class="episode-thumb">
+                            <div class="episode-info">
+                                <div class="episode-title">${ep.title}</div>
+                                <div class="episode-duration">${ep.duration}</div>
+                            </div>
+                            <i class="fa-solid fa-circle-play" style="color: var(--accent-color); font-size: 20px;"></i>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function loadVideoSource(url) {
+            const player = document.getElementById('mainVideoPlayer');
+            const source = document.getElementById('videoSource');
+            source.src = url;
+            player.load();
+            player.play().catch(() => {});
+        }
+
+        function closeDetailsView() {
+            const player = document.getElementById('mainVideoPlayer');
+            player.pause();
+            document.getElementById('details-view').style.display = 'none';
+        }
+
+        renderCatalog();
+    </script>
+</body>
+</html>
