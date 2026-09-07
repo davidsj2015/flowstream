@@ -2,640 +2,409 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FlowStream - Streaming App</title>
-    
-    <meta name="theme-color" content="#141414">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeliCineHD - Ver Películas y Series Online Gratis</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         :root {
-            --bg-color: #141414;
-            --card-bg: #1f1f1f;
-            --accent-color: #E50914;
-            --text-main: #ffffff;
-            --text-secondary: #aaaaaa;
+            --bg-main: #0d1117;
+            --bg-card: #161b22;
+            --primary: #00d26a;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg-main);
             color: var(--text-main);
-            padding-bottom: 70px;
-            overflow-x: hidden;
-            user-select: none;
-        }
-
-        /* Navbar Superior */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 55px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(20,20,20,0) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            z-index: 1000;
-        }
-
-        .brand-logo {
-            color: var(--accent-color);
-            font-size: 20px;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        /* Banner Principal */
-        .hero-banner {
-            position: relative;
-            width: 100%;
-            height: 380px;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 20px 16px;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 80%;
-            background: linear-gradient(180deg, transparent 0%, #141414 100%);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 2px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
-
-        .hero-title {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .hero-btns {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-action {
-            background-color: white;
-            color: black;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-
-        /* Listas y Filas Horizontales */
-        .category-section {
-            margin-top: 20px;
-            padding-left: 16px;
-        }
-
-        .category-title {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #e5e5e5;
-        }
-
-        .horizontal-scroll {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-right: 16px;
-            scrollbar-width: none;
-        }
-
-        .horizontal-scroll::-webkit-scrollbar {
-            display: none;
-        }
-
-        .movie-card {
-            flex: 0 0 110px;
-            position: relative;
-            border-radius: 4px;
-            overflow: hidden;
-            background-color: var(--card-bg);
-            cursor: pointer;
-        }
-
-        .poster-container {
-            width: 100%;
-            height: 155px;
-            position: relative;
-        }
-
-        .poster-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .type-badge {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background-color: rgba(0,0,0,0.8);
-            color: var(--accent-color);
-            font-size: 9px;
-            font-weight: bold;
-            padding: 2px 4px;
-            border-radius: 2px;
-        }
-
-        .movie-card-title {
-            font-size: 11px;
-            padding: 6px 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #ccc;
-        }
-
-        /* SPA Vista Detalle y Reproducción */
-        .page-view {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #141414;
-            z-index: 2000;
-            overflow-y: auto;
             padding-bottom: 40px;
         }
 
-        .view-header {
-            position: relative;
-            width: 100%;
-        }
-
-        .btn-back {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 16px;
-            z-index: 110;
-            cursor: pointer;
-        }
-
-        .video-player-box {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background-color: #000;
+        /* Header / Navbar */
+        header {
+            background-color: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(8px);
         }
 
-        .video-player-box video {
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 16px 8px 36px;
+            color: #fff;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Banner de Categorías */
+        .categories-bar {
+            max-width: 1200px;
+            margin: 15px auto;
+            padding: 0 16px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .cat-btn {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: bold;
+            border-color: var(--primary);
+        }
+
+        /* Contenido Principal Grid */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 20px 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        /* Card de Película */
+        .movie-card {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .poster-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 2/3;
+        }
+
+        .poster-wrapper img {
             width: 100%;
             height: 100%;
-            outline: none;
-        }
-
-        .details-body {
-            padding: 16px;
-        }
-
-        .details-meta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin: 8px 0;
-        }
-
-        .match-rate {
-            color: #46d369;
-            font-weight: bold;
-        }
-
-        /* Lista de Episodios */
-        .episodes-section {
-            margin-top: 20px;
-        }
-
-        .season-select {
-            width: 100%;
-            background-color: #2b2b2b;
-            color: white;
-            border: 1px solid #444;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 13px;
-            outline: none;
-            margin-bottom: 15px;
-        }
-
-        .episode-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .episode-card {
-            display: flex;
-            gap: 12px;
-            background-color: var(--card-bg);
-            border-radius: 4px;
-            padding: 8px;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .episode-thumb {
-            width: 80px;
-            height: 50px;
             object-fit: cover;
-            border-radius: 3px;
         }
 
-        .episode-info {
-            flex: 1;
-        }
-
-        .episode-title {
-            font-size: 12px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .episode-duration {
+        .badge-quality {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background-color: var(--primary);
+            color: #000;
             font-size: 10px;
-            color: var(--text-secondary);
-            margin-top: 3px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
         }
 
-        /* Navigation Bar */
-        .bottom-navbar {
+        .badge-lang {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background-color: rgba(0,0,0,0.8);
+            color: #fff;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .movie-info {
+            padding: 10px;
+        }
+
+        .movie-title {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Modal Reproductor */
+        .modal {
+            display: none;
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
-            height: 55px;
-            background-color: #121212;
-            border-top: 1px solid #222;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
             z-index: 1000;
+            overflow-y: auto;
         }
 
-        .nav-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            color: #757575;
-            text-decoration: none;
-            font-size: 10px;
-            background: none;
-            border: none;
+        .modal-content {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: relative;
         }
 
-        .nav-link.active {
-            color: white;
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
         }
 
-        .nav-link i {
-            font-size: 18px;
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #000;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal-details {
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .modal-synopsis {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand-logo">FLOWSTREAM</div>
-        <i class="fa-solid fa-magnifying-glass" style="font-size: 18px; color: white;"></i>
+        <div class="nav-container">
+            <a href="#" class="logo">PeliCine<span>HD</span></a>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Buscar película o serie..." onkeyup="filterMovies()">
+            </div>
+        </div>
     </header>
 
-    <div id="catalog-view">
-        <div class="hero-banner" id="heroBanner">
-            <div class="hero-overlay"></div>
-            <div class="hero-content">
-                <span class="hero-badge">Destacado</span>
-                <h1 class="hero-title" id="heroTitle">Cargando...</h1>
-                <div class="hero-btns">
-                    <button class="btn-action" onclick="openMediaDetails(heroMediaId)">
-                        <i class="fa-solid fa-play"></i> Reproducir
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="category-section">
-            <h3 class="category-title">Agregados Recientemente</h3>
-            <div class="horizontal-scroll" id="recentRow"></div>
-        </div>
-
-        <div class="category-section">
-            <h3 class="category-title">Tendencias Ahora</h3>
-            <div class="horizontal-scroll" id="trendingRow"></div>
-        </div>
-
-        <div class="category-section">
-            <h3 class="category-title">Series Originales</h3>
-            <div class="horizontal-scroll" id="seriesRow"></div>
-        </div>
+    <div class="categories-bar">
+        <button class="cat-btn active">Todas</button>
+        <button class="cat-btn">Acción</button>
+        <button class="cat-btn">Ciencia Ficción</button>
+        <button class="cat-btn">Terror</button>
+        <button class="cat-btn">Estrenos 2026</button>
     </div>
 
-    <!-- Vista Simulada de Detalle y Reproductor -->
-    <div id="details-view" class="page-view">
-        <div class="view-header">
-            <button class="btn-back" onclick="closeDetailsView()"><i class="fa-solid fa-arrow-left"></i></button>
-            <div class="video-player-box">
-                <video id="mainVideoPlayer" controls playsinline>
+    <main>
+        <div class="section-title"><i class="fa-solid fa-fire"></i> Cartelera Principal</div>
+        <div class="movies-grid" id="moviesGrid"></div>
+    </main>
+
+    <!-- Modal para Reproducir -->
+    <div class="modal" id="playerModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="video-container">
+                <video id="videoPlayer" controls>
                     <source id="videoSource" src="" type="video/mp4">
-                    Tu navegador no soporta el reproductor de video.
+                    Tu navegador no soporta reproducción de video.
                 </video>
             </div>
-        </div>
-        
-        <div class="details-body">
-            <h1 id="mediaTitle" style="font-size: 20px; font-weight: 800;"></h1>
-            <div class="details-meta">
-                <span class="match-rate">98% de coincidencia</span>
-                <span id="mediaYear">2026</span>
-                <span id="mediaTypeBadge" style="border: 1px solid #777; padding: 0 4px; font-size: 10px;">SERIE</span>
-            </div>
-            <p id="mediaSynopsis" style="font-size: 12px; line-height: 1.4; color: #ccc; margin-top: 8px;"></p>
-
-            <div class="episodes-section" id="episodesSection">
-                <select class="season-select" id="seasonSelect" onchange="renderEpisodes()">
-                </select>
-                <div class="episode-list" id="episodeList">
-                </div>
+            <div class="modal-details">
+                <h2 class="modal-title" id="mTitle"></h2>
+                <div style="font-size: 12px; color: var(--primary);" id="mMeta"></div>
+                <p class="modal-synopsis" id="mSynopsis"></p>
             </div>
         </div>
     </div>
 
-    <nav class="bottom-navbar">
-        <button class="nav-link active"><i class="fa-solid fa-house"></i>Inicio</button>
-        <button class="nav-link"><i class="fa-solid fa-magnifying-glass"></i>Buscar</button>
-        <button class="nav-link"><i class="fa-solid fa-folder"></i>Librería</button>
-        <button class="nav-link"><i class="fa-solid fa-download"></i>Descargas</button>
-    </nav>
-
     <script>
-        // Generador de pósteres dinámicos local (SVG) para evitar fallos de red o CORS
-        function createSvgPoster(title, color1, color2) {
+        // Función para generar portadas SVG Base64 sin depender de servidores externos
+        function makePoster(title, c1, c2) {
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
                 <defs>
                     <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="${color1}"/>
-                        <stop offset="100%" stop-color="${color2}"/>
+                        <stop offset="0%" stop-color="${c1}"/>
+                        <stop offset="100%" stop-color="${c2}"/>
                     </linearGradient>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#g)"/>
-                <circle cx="150" cy="200" r="80" fill="rgba(255,255,255,0.1)"/>
-                <text x="50%" y="85%" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">${title}</text>
+                <circle cx="150" cy="180" r="60" fill="rgba(255,255,255,0.1)"/>
+                <text x="50%" y="80%" font-family="sans-serif" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">${title}</text>
             </svg>`;
             return 'data:image/svg+xml;base64,' + btoa(svg);
         }
 
-        // Fuente de video MP4 pública altamente disponible via CDN
-        const sampleVideo = 'https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/freeview-licence.mp4';
+        const sampleVid = 'https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/freeview-licence.mp4';
 
-        // Base de datos de películas y series
-        const catalogData = [
-            {
-                id: 1,
-                type: 'series',
-                category: 'recent',
-                title: 'Monarch: Legado',
-                year: '2024',
-                synopsis: 'Tras la atronadora batalla entre Godzilla y los Titanes que arrasó San Francisco, dos hermanos siguen los pasos de su padre para descubrir la conexión de su familia con la organización secreta Monarch.',
-                poster: createSvgPoster('Monarch', '#8e2de2', '#4a00e0'),
-                seasons: [
-                    {
-                        seasonNumber: 1,
-                        episodes: [
-                            { ep: 1, title: 'T1:E1 - Consecuencias', duration: '48m', videoUrl: sampleVideo, thumb: createSvgPoster('E1', '#111', '#444') },
-                            { ep: 2, title: 'T1:E2 - Inserción', duration: '50m', videoUrl: sampleVideo, thumb: createSvgPoster('E2', '#111', '#444') }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 2,
-                type: 'movie',
-                category: 'recent',
-                title: 'Furiosa',
-                year: '2024',
-                synopsis: 'Al caer el mundo, la joven Furiosa es arrebatada del Lugar Verde de Muchas Madres y cae en manos de una gran Horda de Motoristas liderada por el Señor de la Guerra Dementus.',
-                poster: createSvgPoster('Furiosa', '#f12711', '#f5af19'),
-                videoUrl: sampleVideo
-            },
-            {
-                id: 3,
-                type: 'movie',
-                category: 'recent',
-                title: 'Anatomía Caída',
-                year: '2023',
-                synopsis: 'Sandra, una escritora alemana, vive con su marido Samuel y su hijo ciego Daniel en un chalé en medio de los Alpes franceses. Cuando Samuel fallece en misteriosas circunstancias, la investigación averigua si se trató de un suicidio o un homicidio.',
-                poster: createSvgPoster('Anatomía', '#2193b0', '#6dd5ed'),
-                videoUrl: sampleVideo
-            },
-            {
-                id: 4,
-                type: 'movie',
-                category: 'trending',
-                title: 'Pobres Criaturas',
-                year: '2023',
-                synopsis: 'Bella Baxter es una joven revivida por el brillante y poco ortodoxo científico Dr. Godwin Baxter. Bajo la protección de Baxter, Bella está ansiosa por aprender.',
-                poster: createSvgPoster('Pobres C.', '#3a1c71', '#d76d77'),
-                videoUrl: sampleVideo
-            },
-            {
-                id: 5,
-                type: 'movie',
-                category: 'trending',
-                title: 'Dune: Parte 2',
-                year: '2024',
-                synopsis: 'Paul Atreides se une a Chani y a los Fremen mientras busca venganza contra los conspiradores que destruyeron a su familia.',
-                poster: createSvgPoster('Dune 2', '#1f4037', '#99f2c8'),
-                videoUrl: sampleVideo
-            },
-            {
-                id: 6,
-                type: 'series',
-                category: 'series',
-                title: 'Stranger Things',
-                year: '2022',
-                synopsis: 'Cuando un niño desaparece, sus amigos, su familia y la policía se ven envueltos en un misterio aterrador que involucra experimentos secretos.',
-                poster: createSvgPoster('Stranger T.', '#000000', '#e50914'),
-                seasons: [
-                    {
-                        seasonNumber: 1,
-                        episodes: [
-                            { ep: 1, title: 'T1:E1 - La desaparición', duration: '48m', videoUrl: sampleVideo, thumb: createSvgPoster('E1', '#222', '#555') },
-                            { ep: 2, title: 'T1:E2 - La loca de la calle Maple', duration: '55m', videoUrl: sampleVideo, thumb: createSvgPoster('E2', '#222', '#555') }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 7,
-                type: 'movie',
-                category: 'series',
-                title: 'Spider-Man',
-                year: '2023',
-                synopsis: 'Miles Morales emprende una aventura a través del Multiverso junto con Gwen Stacy y un nuevo equipo de la Spider-Gente.',
-                poster: createSvgPoster('Spider-Man', '#eb3b5a', '#2bcbba'),
-                videoUrl: sampleVideo
-            }
+        const moviesData = [
+            { id: 1, title: 'Inception', year: '2026', quality: '4K', lang: 'LATINO', poster: makePoster('Inception', '#1a2a6c', '#b21f1f'), video: sampleVid, synopsis: 'Un ladrón que roba secretos corporativos a través del uso de la tecnología de intercambio de sueños.' },
+            { id: 2, title: 'Interstellar', year: '2026', quality: 'HD', lang: 'SUB', poster: makePoster('Interstellar', '#0f2027', '#203a43'), video: sampleVid, synopsis: 'Un equipo de exploradores viaja a través de un agujero de gusano en el espacio en un intento por garantizar la supervivencia de la humanidad.' },
+            { id: 3, title: 'Blade Runner 2049', year: '2025', quality: '1080p', lang: 'LATINO', poster: makePoster('Blade Runner', '#8A2387', '#E94057'), video: sampleVid, synopsis: 'Un joven blade runner descubre un secreto largo tiempo enterrado que tiene el potencial de sumir lo que queda de la sociedad en el caos.' },
+            { id: 4, title: 'The Martian', year: '2025', quality: '4K', lang: 'LATINO', poster: makePoster('The Martian', '#11998e', '#38ef7d'), video: sampleVid, synopsis: 'Un astronauta queda varado en Marte después de que su equipo lo da por muerto, y debe confiar en su ingenio para encontrar una manera de hacer señal a la Tierra.' },
+            { id: 5, title: 'Upgrade', year: '2026', quality: 'HD', lang: 'LATINO', poster: makePoster('Upgrade', '#4568DC', '#B06AB3'), video: sampleVid, synopsis: 'En un futuro cercano, la tecnología controla casi todos los aspectos de la vida. Pero cuando la vida de Grey se da la vuelta, su única esperanza de venganza es un implante experimental de chip de computadora.' },
+            { id: 6, title: 'Archive', year: '2026', quality: '1080p', lang: 'SUB', poster: makePoster('Archive', '#43C6AC', '#F8FFAE'), video: sampleVid, synopsis: '2038: George Almore está trabajando en una IA equivalente a la humana. Su último prototipo está casi listo, pero su verdadero objetivo es reunirse con su esposa muerta.' }
         ];
 
-        let activeMedia = null;
-        let heroMediaId = 1;
-
-        function renderCatalog() {
-            const recentRow = document.getElementById('recentRow');
-            const trendingRow = document.getElementById('trendingRow');
-            const seriesRow = document.getElementById('seriesRow');
-
-            recentRow.innerHTML = '';
-            trendingRow.innerHTML = '';
-            seriesRow.innerHTML = '';
-
-            catalogData.forEach(item => {
-                const cardHTML = `
-                    <div class="movie-card" onclick="openMediaDetails(${item.id})">
-                        <div class="poster-container">
-                            <span class="type-badge">${item.type === 'series' ? 'SERIE' : 'PELI'}</span>
-                            <img src="${item.poster}" class="poster-img" alt="${item.title}">
+        function renderGrid(data) {
+            const grid = document.getElementById('moviesGrid');
+            grid.innerHTML = '';
+            data.forEach(item => {
+                grid.innerHTML += `
+                    <div class="movie-card" onclick="openModal(${item.id})">
+                        <div class="poster-wrapper">
+                            <span class="badge-quality">${item.quality}</span>
+                            <span class="badge-lang">${item.lang}</span>
+                            <img src="${item.poster}" alt="${item.title}">
                         </div>
-                        <div class="movie-card-title">${item.title}</div>
+                        <div class="movie-info">
+                            <div class="movie-title">${item.title}</div>
+                            <div class="movie-meta">
+                                <span>${item.year}</span>
+                                <span><i class="fa-solid fa-star" style="color:#ffc107;"></i> 8.5</span>
+                            </div>
+                        </div>
                     </div>
                 `;
-
-                if (item.category === 'recent') recentRow.innerHTML += cardHTML;
-                if (item.category === 'trending') trendingRow.innerHTML += cardHTML;
-                if (item.category === 'series') seriesRow.innerHTML += cardHTML;
-            });
-
-            // Banner principal
-            const hero = catalogData[0];
-            heroMediaId = hero.id;
-            document.getElementById('heroBanner').style.backgroundImage = `url('${hero.poster}')`;
-            document.getElementById('heroTitle').innerText = hero.title;
-        }
-
-        function openMediaDetails(id) {
-            activeMedia = catalogData.find(m => m.id === id);
-            if (!activeMedia) return;
-
-            document.getElementById('details-view').style.display = 'block';
-            document.getElementById('mediaTitle').innerText = activeMedia.title;
-            document.getElementById('mediaYear').innerText = activeMedia.year;
-            document.getElementById('mediaTypeBadge').innerText = activeMedia.type === 'series' ? 'SERIE' : 'PELÍCULA';
-            document.getElementById('mediaSynopsis').innerText = activeMedia.synopsis;
-
-            const episodesSec = document.getElementById('episodesSection');
-
-            if (activeMedia.type === 'series') {
-                episodesSec.style.display = 'block';
-                setupSeasonSelector();
-                renderEpisodes();
-                loadVideoSource(activeMedia.seasons[0].episodes[0].videoUrl);
-            } else {
-                episodesSec.style.display = 'none';
-                loadVideoSource(activeMedia.videoUrl);
-            }
-        }
-
-        function setupSeasonSelector() {
-            const select = document.getElementById('seasonSelect');
-            select.innerHTML = '';
-            activeMedia.seasons.forEach(s => {
-                select.innerHTML += `<option value="${s.seasonNumber}">Temporada ${s.seasonNumber}</option>`;
             });
         }
 
-        function renderEpisodes() {
-            const seasonNum = parseInt(document.getElementById('seasonSelect').value);
-            const season = activeMedia.seasons.find(s => s.seasonNumber === seasonNum);
-            const epList = document.getElementById('episodeList');
-            epList.innerHTML = '';
-
-            if (season) {
-                season.episodes.forEach(ep => {
-                    epList.innerHTML += `
-                        <div class="episode-card" onclick="loadVideoSource('${ep.videoUrl}')">
-                            <img src="${ep.thumb}" class="episode-thumb">
-                            <div class="episode-info">
-                                <div class="episode-title">${ep.title}</div>
-                                <div class="episode-duration">${ep.duration}</div>
-                            </div>
-                            <i class="fa-solid fa-circle-play" style="color: var(--accent-color); font-size: 20px;"></i>
-                        </div>
-                    `;
-                });
-            }
+        function filterMovies() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = moviesData.filter(m => m.title.toLowerCase().includes(query));
+            renderGrid(filtered);
         }
 
-        function loadVideoSource(url) {
-            const player = document.getElementById('mainVideoPlayer');
-            const source = document.getElementById('videoSource');
-            source.src = url;
+        function openModal(id) {
+            const item = moviesData.find(m => m.id === id);
+            if(!item) return;
+
+            document.getElementById('mTitle').innerText = item.title;
+            document.getElementById('mMeta').innerText = `${item.year} • ${item.quality} • ${item.lang}`;
+            document.getElementById('mSynopsis').innerText = item.synopsis;
+            
+            const player = document.getElementById('videoPlayer');
+            document.getElementById('videoSource').src = item.video;
             player.load();
-            player.play().catch(() => {});
+
+            document.getElementById('playerModal').style.display = 'block';
         }
 
-        function closeDetailsView() {
-            const player = document.getElementById('mainVideoPlayer');
+        function closeModal() {
+            const player = document.getElementById('videoPlayer');
             player.pause();
-            document.getElementById('details-view').style.display = 'none';
+            document.getElementById('playerModal').style.display = 'none';
         }
 
-        renderCatalog();
+        renderGrid(moviesData);
     </script>
 </body>
 </html>
